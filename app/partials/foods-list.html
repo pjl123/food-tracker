@@ -1,19 +1,47 @@
-<div>
-	<form ng-submit="addFood()">
-		Food Name:
-		<input type="text" ng-model="food.name">
-		Food Type:
-		<select ng-model="food.type">
-			<option value="meat">Meat</option>
-			<option value="vegetable">Vegetable</option>
-			<option value="fruit">Fruit</option>
-			<option value="dairy">Dairy</option>
-			<option value="snack">Snack</option>
-		</select>
-		Quantity:
-		<input type="text" ng-model="food.quantity">
-		<input type="submit" value="Add Food"></button>
-		<pre ng-show="food.name || food.type || food.quantity">{{food.name}} {{food.type}} {{food.quantity}}</pre>
+<div class="container">
+	<form role="form" ng-submit="addFood()">
+		<table class="table">
+			<td>
+				<div class="form-group">
+					Food Name:
+					<input type="text" ng-model="food.name">
+				</div>
+			</td>
+			<td>
+				<div class="form-group">
+					Food Type:
+					<select ng-model="food.type">
+						<option value="grain">Grain</option>
+						<option value="protein">Protein</option>
+						<option value="vegetable">Vegetable</option>
+						<option value="fruit">Fruit</option>
+						<option value="legume">Legume</option>
+						<option value="dairy">Dairy</option>
+						<option value="protein">Meat</option>
+						<option value="snack">Snack</option>
+					</select>
+				</div>
+			</td>
+			<td>
+				<div class="form-group">
+					Quantity:
+					<input type="number" ng-model="food.quantity.numeric">
+					<select ng-model="food.quantity.units">
+						<option value="item">item(s)</option>
+						<option value="pound">lbs.</option>
+						<option value="ounce">oz.</option>
+						<option value="gram">grams</option>
+						<option value="fluid_ounce">fl. oz.</option>
+						<option value="gallon">gallons</option>
+						<option value="liter">liters</option>
+					</select>
+				</div>
+			</td>
+			<td>
+				<input type="submit" class="btn btn-default" value="Add Food"></button>
+			</td>
+		</table>
+		<pre ng-show="food.name || food.type || food.quantity">{{food.name}} {{food.type}} {{food.quantity.numeric}} {{food.quantity.units}}</pre>
 	</form>
 
 	<h4>Here's the current pantry:</h4>
@@ -23,16 +51,21 @@
 		<option value="name">Name</option>
 		<option value="type">Type</option>
 	</select>
-	<ol>
-		<li ng-repeat="food in foods | filter:query | orderBy:category">
-			<table>
-				<tr>
-					<td>{{food.name}}</td>
-					<td>{{food.type}}</td>
-					<td>{{food.quantity}}</td>
-					<td><a ng-click="removeFood(food)">remove</a></td>
-				</tr>
-			</table>
-		</li>
-	</ol>
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered">
+			<tr>
+				<th>Food Name</th>
+				<th>Type</th>
+				<th>Quantity</th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="food in foods | filter:query | orderBy:category">
+				<td>{{food.name}}</td>
+				<td>{{food.type}}</td>
+				<td>{{food.quantity.numeric}} {{food.quantity.units}}</td>
+				<td><input type="submit" class = "btn btn-default" ng-click="removeFood(food)" value="remove"></td>
+			</tr>
+		</table>
+	</div>
+	<input type="submit" class = "btn btn-default" ng-click="resetData()" value="Reset with Mock Data">
 </div>
