@@ -1,0 +1,38 @@
+<div>
+	<form ng-submit="addFood()">
+		Food Name:
+		<input type="text" ng-model="food.name">
+		Food Type:
+		<select ng-model="food.type">
+			<option value="meat">Meat</option>
+			<option value="vegetable">Vegetable</option>
+			<option value="fruit">Fruit</option>
+			<option value="dairy">Dairy</option>
+			<option value="snack">Snack</option>
+		</select>
+		Quantity:
+		<input type="text" ng-model="food.quantity">
+		<input type="submit" value="Add Food"></button>
+		<pre ng-show="food.name || food.type || food.quantity">{{food.name}} {{food.type}} {{food.quantity}}</pre>
+	</form>
+
+	<h4>Here's the current pantry:</h4>
+	Search:<input ng-model="query" type="text">
+	Sort By:
+	<select ng-model="category">
+		<option value="name">Name</option>
+		<option value="type">Type</option>
+	</select>
+	<ol>
+		<li ng-repeat="food in foods | filter:query | orderBy:category">
+			<table>
+				<tr>
+					<td>{{food.name}}</td>
+					<td>{{food.type}}</td>
+					<td>{{food.quantity}}</td>
+					<td><a ng-click="removeFood(food)">remove</a></td>
+				</tr>
+			</table>
+		</li>
+	</ol>
+</div>
