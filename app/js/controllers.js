@@ -4,6 +4,7 @@
 
 var foodTrackerControllers = angular.module('foodTrackerControllers', ['ngStorage']);
 
+/*    Navigation Controller    */
 foodTrackerControllers.controller('NavCtrl', ['$scope', '$location', function($scope, $location){
   $scope.getPage = function(){
     if($location.path()==="/"){
@@ -21,25 +22,17 @@ foodTrackerControllers.controller('NavCtrl', ['$scope', '$location', function($s
   };
 }]);
 
+/*    Main Page Controller    */
 foodTrackerControllers.controller('MainCtrl', function ($scope){
   
 });
 
+/*    Food Controller    */
 foodTrackerControllers.controller('FoodsCtrl', ['$scope','$localStorage','$route','$log', function ($scope,$localStorage,$route,$log){
   $scope.$storage = $localStorage.$default({
+    groceryLists:[],
     recipes:[],
-    foods:[
-      {name:"steak",type:"protein",quantity:{numeric:1,units:"pound"},showEdit:false},
-      {name:"apple",type:"fruit",quantity:{numeric:4,units:"item"},showEdit:false},
-      {name:"spinach",type:"vegetable",quantity:{numeric:0.5,units:"pound"},showEdit:false},
-      {name:"potato chips",type:"snack",quantity:{numeric:1,units:"item"},showEdit:false},
-      {name:"celery",type:"vegetable",quantity:{numeric:0.5,units:"pound"},showEdit:false},
-      {name:"rice",type:"grain",quantity:{numeric:1,units:"pound"},showEdit:false},
-      {name:"black beans",type:"legume",quantity:{numeric:8,units:"ounce"},showEdit:false},
-      {name:"yogurt",type:"dairy",quantity:{numeric:6,units:"ounce"},showEdit:false},
-      {name:"orange",type:"fruit",quantity:{numeric:3,units:"item"},showEdit:false},
-      {name:"bread",type:"grain",quantity:{numeric:1,units:"item"},showEdit:false}
-    ]
+    foods:[]
   });
   $scope.foods = $scope.$storage.foods;
   $scope.food = {};
@@ -62,6 +55,7 @@ foodTrackerControllers.controller('FoodsCtrl', ['$scope','$localStorage','$route
 
   $scope.resetData = function(){
     $localStorage.$reset({
+      groceryLists:$scope.$storage.groceryLists,
       recipes:$scope.$storage.recipes,
       foods:[
         {name:"steak",type:"protein",quantity:{numeric:1,units:"pound"},showEdit:false},
@@ -81,21 +75,12 @@ foodTrackerControllers.controller('FoodsCtrl', ['$scope','$localStorage','$route
 
 }]);
 
+/*    Recipe Controller    */
 foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http','$log', function($scope,$localStorage,$http,$log){
   $scope.$storage = $localStorage.$default({
+    groceryLists:[],
     recipes:[],
-    foods:[
-      {name:"steak",type:"protein",quantity:{numeric:1,units:"pound"},showEdit:false},
-      {name:"apple",type:"fruit",quantity:{numeric:4,units:"item"},showEdit:false},
-      {name:"spinach",type:"vegetable",quantity:{numeric:0.5,units:"pound"},showEdit:false},
-      {name:"potato chips",type:"snack",quantity:{numeric:1,units:"item"},showEdit:false},
-      {name:"celery",type:"vegetable",quantity:{numeric:0.5,units:"pound"},showEdit:false},
-      {name:"rice",type:"grain",quantity:{numeric:1,units:"pound"},showEdit:false},
-      {name:"black beans",type:"legume",quantity:{numeric:8,units:"ounce"},showEdit:false},
-      {name:"yogurt",type:"dairy",quantity:{numeric:6,units:"ounce"},showEdit:false},
-      {name:"orange",type:"fruit",quantity:{numeric:3,units:"item"},showEdit:false},
-      {name:"bread",type:"grain",quantity:{numeric:1,units:"item"},showEdit:false}
-    ]
+    foods:[]
   });
   $scope.recipes = $scope.$storage.recipes;
   $scope.newRecipes = [];
@@ -225,5 +210,70 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
 
 }]);
 
-foodTrackerControllers.controller('GroceryListCtrl', ['$scope', function($scope){
+/*    Grocery List Controller    */
+foodTrackerControllers.controller('GroceryListCtrl', ['$scope','$localStorage','$log', function($scope,$localStorage,$log){
+  $scope.$storage = $localStorage.$default({
+    groceryLists:[],
+    recipes:[],
+    foods:[]
+  });
+
+  $scope.groceryLists = $scope.$storage.groceryLists;
+  $scope.groceryList = {};
+  $scope.groceryList.foods = {};
+  $scope.groceryList.recipe = {};
+  $scope.query = "";
+  $scope.reverse = false;
+
+  var getRecipe = function(name){
+    for (var i = 0; i < $scope.$storage.recipes.length; i++) {
+      if(name === $scope.$storage.recipes[i].name){
+        return $scope.$storage.recipes[i];
+      }
+    };
+  };
+
+  $scope.removeFood = function(groceryList,food){
+    var i = groceryList.foods.indexOf(food);
+    groceryList.foods.splice(i,1);
+  };
+
+  $scope.removeList = function(groceryList){
+    var i = $scope.groceryLists.indexOf(groceryList);
+    $scope.groceryLists.splice(i,1);
+  };
+
+
+  $scope.createListFromRecipe = function(){
+    var newList = $scope.groceryList;
+    newList.recipe = getRecipe(newList.recipe.name);
+    newList.foods = [];
+    var ingredients = newList.recipe.ingredients;
+    var foods = $scope.$storage.foods;
+
+    for (var i = 0; i < ingredients.length; i++) {
+      var foodNeeded = true;
+      for(var j = 0; j < foods.length; j++){
+        if(ingredients[i].name.toUpperCase().search(foods[j].name.toUpperCase()) > -1){
+          if(foods[j].quantity.numeric >= ingredients[i].quantity.numeric){
+            foodNeeded = false;
+            break;
+          }
+          else{
+            var f = {name: ingredients[i].name, quantity: {numeric: ingredients[i].quantity.numeric - foods[j].quantity.numeric, units: ingredients[i].quantity.units}};
+            newList.foods.push(f);
+            foodNeeded = false;
+            break;
+          }
+        }
+      }
+      if(foodNeeded){
+        var f = {name: ingredients[i].name, quantity: {numeric: ingredients[i].quantity.numeric, units: ingredients[i].quantity.units}};
+        newList.foods.push(f);
+      }
+    };
+    $scope.groceryLists.push(newList);
+    $scope.groceryList = {};
+  };
+
 }]);
