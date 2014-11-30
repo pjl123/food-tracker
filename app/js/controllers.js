@@ -130,25 +130,61 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
     return ingredients;
   };
 
+  var getIngredients = function(recipe){
+    var base_get_url = "http://api.bigoven.com/recipe/";
+    var apiKey = "dvxOdYo0h9AN8CCJ5mLa8SufcGu6wer4";
+    var params = {
+      api_key: apiKey
+    };
+    var config = {
+      params: params
+    };
+
+    var ingredients = [];
+    $http.get(base_get_url + recipe.recipeId,config)
+    .success(function(data){
+      recipe.instructions = data.Instructions;
+      var ingredientData = data.Ingredients;
+
+      for (var i = 0; i < ingredientData.length; i++) {
+        if(!(ingredientData[i].IngredientInfo === undefined)){
+          var ingredient = {};
+          ingredient.quantity = {};
+          ingredient.name = ingredientData[i].IngredientInfo.Name;
+          if(ingredientData[i].Quantity === undefined){
+            ingredient.quantity.numeric = ingredientData[i].MetricQuantity;
+            ingredient.quantity.units = ingredientData[i].MetricUnit;
+          }
+          else{
+            ingredient.quantity.numeric = ingredientData[i].Quantity;
+            ingredient.quantity.units = ingredientData[i].Unit;
+          }
+          ingredients.push(ingredient);
+          $log.log(ingredient);
+        }
+      };
+    });
+    recipe.ingredients = ingredients;
+  };
+
   var parseRecipeSearch = function(data){
     var newRecipe = {};
     var recipeData = data.Results[0];
+    newRecipe.recipeId = recipeData.RecipeID;
     newRecipe.name = recipeData.Title;
     newRecipe.link = recipeData.WebURL;
-    // TODO Read in the ingredients
+    getIngredients(newRecipe);
     return newRecipe;
   };
 
   $scope.findRandomRecipe = function(){
     $scope.waitForSearch = true;
     var base_search_url = "http://api.bigoven.com/recipes";
-    var base_get_url = "http://api.bigoven.com/recipe/";
     var apiKey = "dvxOdYo0h9AN8CCJ5mLa8SufcGu6wer4";
     var ingredients = getRandomIngredients();
 
     var params = {
       api_key: apiKey,
-      responseType: 'json',
       rpp: 1,
       pg: Math.ceil(Math.random()*200),
       any_kw: ingredients
@@ -160,6 +196,7 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
     $http.get(base_search_url,config)
     .success(function(data,status){
       var newRecipe = parseRecipeSearch(data);
+      newRecipe.expand = false;
       $scope.newRecipes.push(newRecipe);
       $scope.waitForSearch = false;
     })
