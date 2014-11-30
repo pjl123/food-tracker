@@ -21,6 +21,14 @@ foodTrackerApp.config(['$routeProvider',
         templateUrl: 'partials/foods-list.html',
         controller: 'FoodsCtrl'
       }).
+      when('/recipes',{
+        templateUrl: 'partials/recipes.html',
+        controller: 'RecipeCtrl'
+      }).
+      when('/groceryList',{
+        templateUrl: 'partials/grocery-list.html',
+        controller: 'GroceryListCtrl'
+      }).
       otherwise({
         redirectTo:'/'
       });
