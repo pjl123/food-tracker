@@ -5,8 +5,7 @@
 var foodTrackerApp = angular.module('foodTrackerApp', [
   'ngRoute',
   'phonecatAnimations',
-
-  'phonecatControllers',
+  'foodTrackerControllers',
   'phonecatFilters',
   'phonecatServices'
 ]);
@@ -14,14 +13,6 @@ var foodTrackerApp = angular.module('foodTrackerApp', [
 foodTrackerApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
-      when('/phones', {
-        templateUrl: 'partials/phone-list.html',
-        controller: 'PhoneListCtrl'
-      }).
-      when('/phones/:phoneId', {
-        templateUrl: 'partials/phone-detail.html',
-        controller: 'PhoneDetailCtrl'
-      }).
       when('/',{
         templateUrl: 'partials/main.html',
         controller: 'MainCtrl'

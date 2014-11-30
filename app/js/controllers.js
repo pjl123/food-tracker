@@ -2,26 +2,26 @@
 
 /* Controllers */
 
-var phonecatControllers = angular.module('phonecatControllers', ['ngStorage']);
+var foodTrackerControllers = angular.module('foodTrackerControllers', ['ngStorage']);
 
-phonecatControllers.controller('PhoneListCtrl', ['$scope', 'Phone',
-  function($scope, Phone) {
-    $scope.phones = Phone.query();
-    $scope.orderProp = 'age';
-  }]);
-
-phonecatControllers.controller('PhoneDetailCtrl', ['$scope', '$routeParams', 'Phone',
-  function($scope, $routeParams, Phone) {
-    $scope.phone = Phone.get({phoneId: $routeParams.phoneId}, function(phone) {
-      $scope.mainImageUrl = phone.images[0];
-    });
-
-    $scope.setImage = function(imageUrl) {
-      $scope.mainImageUrl = imageUrl;
+foodTrackerControllers.controller('NavCtrl', ['$scope', '$location', function($scope, $location){
+  $scope.getPage = function(){
+    if($location.path()==="/"){
+      return 0;
     }
-  }]);
+    else if($location.path()==="/foods"){
+      return 1;
+    }
+    else if($location.path()==="/recipes"){
+      return 2;
+    }
+    else if($location.path()==="/groceryList"){
+      return 3;
+    };
+  };
+}]);
 
-phonecatControllers.controller('FoodsCtrl', ['$scope','$localStorage', function ($scope,$localStorage){
+foodTrackerControllers.controller('FoodsCtrl', ['$scope','$localStorage', function ($scope,$localStorage){
   $scope.$storage = $localStorage.$default({
     foods:[
       {name:"steak",type:"protein",quantity:{numeric:1,units:"pound"}},
@@ -72,6 +72,6 @@ phonecatControllers.controller('FoodsCtrl', ['$scope','$localStorage', function 
 
 }]);
 
-phonecatControllers.controller('MainCtrl', function ($scope){
+foodTrackerControllers.controller('MainCtrl', function ($scope){
   
 });
