@@ -100,6 +100,7 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
   $scope.recipes = $scope.$storage.recipes;
   $scope.newRecipes = [];
   $scope.recipe = {};
+  $scope.waitForSearch = false;
 
   $scope.query = "";
   $scope.category = 'name';
@@ -112,11 +113,16 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
     var num_ingredients = 3;
     var ingredients = '';
     for (var i = 0; i < num_ingredients && num_ingredients <= foods.length; i++) {
-      // get random food and remove it from temp food array
+      // get random food that isn't a snack or beverage and remove it from temp food array
       var food = foods[Math.ceil(Math.random()*foods.length)-1];
       var j = foods.indexOf(food);
       foods.splice(j,1);
-      ingredients = ingredients + food.name;
+      if(food.type==="snack" || food.type==="beverage"){
+        i--;
+      }
+      else{
+        ingredients = ingredients + food.name;
+      }
       if(!((i==num_ingredients-1) || (num_ingredients > foods.length))){
         ingredients = ingredients + ',';
       }
@@ -124,9 +130,19 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
     return ingredients;
   };
 
+  var parseRecipeSearch = function(data){
+    var newRecipe = {};
+    var recipeData = data.Results[0];
+    newRecipe.name = recipeData.Title;
+    newRecipe.link = recipeData.WebURL;
+    // TODO Read in the ingredients
+    return newRecipe;
+  };
+
   $scope.findRandomRecipe = function(){
+    $scope.waitForSearch = true;
     var base_search_url = "http://api.bigoven.com/recipes";
-    var base_get_url = "http://food2fork.com/api/get";
+    var base_get_url = "http://api.bigoven.com/recipe/";
     var apiKey = "dvxOdYo0h9AN8CCJ5mLa8SufcGu6wer4";
     var ingredients = getRandomIngredients();
 
@@ -134,7 +150,7 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
       api_key: apiKey,
       responseType: 'json',
       rpp: 1,
-      pg: Math.ceil(Math.random()*50),
+      pg: Math.ceil(Math.random()*200),
       any_kw: ingredients
     };
     var config = {
@@ -143,23 +159,29 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
 
     $http.get(base_search_url,config)
     .success(function(data,status){
-      $log.log(status + '\n' + data);
-      var recipe = {};
-      recipe.name = data.count;
-      $scope.recipes.push(recipe);
+      var newRecipe = parseRecipeSearch(data);
+      $scope.newRecipes.push(newRecipe);
+      $scope.waitForSearch = false;
     })
     .error(function(data,status,statusText,headers){
       $log.error('Error sending request: ' + status + '\n' + data);
+      $scope.waitForSearch = false;
     });
   };
 
-  $scope.addFood = function(){
+  $scope.saveRecipe = function(recipe){
+    $scope.recipes.push(recipe);
+    var i = $scope.newRecipes.indexOf(recipe);
+    $scope.newRecipes.splice(i,1);
+  };
+
+  $scope.addRecipe = function(){
     var newRecipe = $scope.recipe;
     $scope.recipes.push(newRecipe);
     $scope.recipe = {};
   };
 
-  $scope.removeFood = function(recipe){
+  $scope.removeRecipe = function(recipe){
     var i = $scope.recipes.indexOf(recipe);
     $scope.recipes.splice(i,1);
   };

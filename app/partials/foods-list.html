@@ -19,6 +19,7 @@
 						<option value="dairy">Dairy</option>
 						<option value="protein">Meat</option>
 						<option value="snack">Snack</option>
+						<option value="beverage">Beverage</option>
 					</select>
 				</div>
 			</td>
@@ -69,6 +70,7 @@
 						<option value="dairy">Dairy</option>
 						<option value="protein">Meat</option>
 						<option value="snack">Snack</option>
+						<option value="beverage">Beverage</option>
 					</select>
 				</td>
 				<td ng-hide="f.showEdit">{{f.quantity.numeric}} {{f.quantity.units}}</td>
@@ -88,13 +90,6 @@
 				<td ng-show="f.showEdit"><input type="submit" class="btn btn-default" ng-click="f.showEdit=false" value="save"></td>
 				<td><input type="submit" class="btn btn-default" ng-click="removeFood(f)" value="remove"></td>
 			</tr>
-				<!--<tr ng-show="f.showEdit">
-					<td>{{f.name}}</td>
-					<td>{{f.type}}</td>
-					<td>{{f.quantity.numeric}} {{f.quantity.units}}</td>
-					<td><input type="submit" class = "btn btn-default" ng-click="f.showEdit=false" value="save"></td>
-					<td><input type="submit" class = "btn btn-default" ng-click="removeFood(f)" value="remove"></td>
-				</tr>-->
 		</table>
 	</div>
 	<input type="submit" class="btn btn-default" ng-click="resetData()" value="Reset with Mock Data">
