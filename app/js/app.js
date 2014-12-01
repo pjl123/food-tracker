@@ -4,10 +4,7 @@
 
 var foodTrackerApp = angular.module('foodTrackerApp', [
   'ngRoute',
-  'phonecatAnimations',
-  'foodTrackerControllers',
-  'phonecatFilters',
-  'phonecatServices'
+  'foodTrackerControllers'
 ]);
 
 foodTrackerApp.config(['$routeProvider',

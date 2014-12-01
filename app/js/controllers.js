@@ -41,6 +41,14 @@ foodTrackerControllers.controller('FoodsCtrl', ['$scope','$localStorage','$route
   $scope.category = 'name';
   $scope.reverse = false;
 
+  $scope.fieldsIncorrect = function(){
+    return ($scope.food.name === undefined || $scope.food.name.$dirty && $scope.food.name.$invalid)
+      || ($scope.food.type === undefined ||$scope.food.type.$dirty && $scope.food.type.$invalid)
+      || ($scope.food.quantity === undefined)
+      || ($scope.food.quantity.numeric === undefined ||$scope.food.quantity.numeric.$dirty && $scope.food.quantity.numeric.$invalid)
+      || ($scope.food.quantity.units === undefined ||$scope.food.quantity.units.$dirty && $scope.food.quantity.units.$invalid);
+  };
+
   $scope.addFood = function(){
     var newFood = $scope.food;
     newFood.showEdit=false;
@@ -224,6 +232,11 @@ foodTrackerControllers.controller('GroceryListCtrl', ['$scope','$localStorage','
   $scope.groceryList.recipe = {};
   $scope.query = "";
   $scope.reverse = false;
+
+  $scope.fieldsIncorrect = function(){
+    return ($scope.groceryList.name === undefined || $scope.groceryList.name.$dirty && $scope.groceryList.name.$invalid)
+      || ($scope.groceryList.recipe.name === undefined ||$scope.groceryList.recipe.name.$dirty && $scope.groceryList.name.recipe.$invalid);
+  };
 
   var getRecipe = function(name){
     for (var i = 0; i < $scope.$storage.recipes.length; i++) {
