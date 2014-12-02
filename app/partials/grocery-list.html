@@ -1,0 +1,39 @@
+<div class="container">
+	<form role="form" ng-submit="createListFromRecipe()" novalidate>
+		<table class="table">
+			<td>
+				<div class="form-group">
+					List Name: <input type="text" ng-model="groceryList.name" required>
+				</div>
+			</td>
+			<td>
+				<div class="form-group">
+					Recipe: 
+					<select ng-model="groceryList.recipe.name" required>
+						<option ng-repeat="r in $storage.recipes">{{r.name}}</option>
+					</select>
+				</div>
+			</td>
+			<td><input type="submit" class="btn btn-default" ng-disabled="fieldsIncorrect()" value="Create List"></td>
+		</table>
+	</form>
+	<h4>Grocery Lists:</h4>
+	Search: <input ng-model="query" type="text">
+	<div class="table-responsive" ng-repeat="g in groceryLists | filter:query | orderBy:category:reverse">
+		{{g.name}} <input type="submit" class="btn btn-default" ng-click="removeList(g)" value="remove">
+		<table class="table table-striped table-bordered">
+			<tr>
+				<th>Food Name</th>
+				<th>Quantity</th>
+				<th></th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="f in g.foods">
+				<td>{{f.name}}</td>
+				<td>{{f.quantity.numeric}} {{f.quantity.units}}</td>
+				<td><input type="checkbox" ng-model="f.purchased">  purchased</td>
+				<td><input type="submit" class="btn btn-default" ng-click="removeFood(g,f)" value="remove"></td>
+			</tr>
+		</table>
+	</div>
+</div>
