@@ -94,16 +94,20 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
   $scope.newRecipes = [];
   $scope.recipe = {};
   $scope.waitForSearch = false;
+  $scope.noFoods = false;
 
   $scope.query = "";
   $scope.category = 'name';
   $scope.reverse = false;
 
   var getRandomIngredients = function() {
-    // copy food array
+        // copy food array
     var foods = $scope.$storage.foods.slice(0);
+
+    var num_ingredients = 3 < foods.length ? 3 : foods.length;
+    if (num_ingredients === 0) { return undefined; };
+
     // get 3 ingredients from the foods in pantry
-    var num_ingredients = 3;
     var ingredients = '';
     for (var i = 0; i < num_ingredients && num_ingredients <= foods.length; i++) {
       // get random food that isn't a snack or beverage and remove it from temp food array
@@ -172,9 +176,11 @@ foodTrackerControllers.controller('RecipeCtrl', ['$scope','$localStorage','$http
 
   $scope.findRandomRecipe = function(){
     $scope.waitForSearch = true;
+    $scope.noFoods = false;
     var base_search_url = "http://api.bigoven.com/recipes";
     var apiKey = "dvxOdYo0h9AN8CCJ5mLa8SufcGu6wer4";
     var ingredients = getRandomIngredients();
+    if (ingredients === undefined) { $scope.waitForSearch = false; $scope.noFoods = true; return; };
 
     var params = {
       api_key: apiKey,
