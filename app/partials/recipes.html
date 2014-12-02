@@ -1,0 +1,61 @@
+<div class="container">
+	<table>
+		<td>
+			<input type="submit" class = "btn btn-default" ng-click="findRandomRecipe()" value="Get a New Random Recipe">
+		</td>
+		<td ng-show="waitForSearch"> Searching...</td>
+		<td ng-show="noFoods"> No Foods in the Database!</td>
+	</table>
+
+	<div ng-show="newRecipes.length > 0">
+		<h4>Temporary Recipe List</h4>
+		(leaving this page or refreshing will clear this list):
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered">
+				<tr>
+					<th><a href="" ng-click="reverse=!reverse">Recipe Name</a></th>
+					<th>Ingredients</th>
+					<th>Instructions</th>
+					<th>Recipe Link</th>
+					<th></th>
+				</tr>
+			<tr ng-repeat="r in newRecipes">
+				<td ng-show="r.expand">{{r.name}}<a href="" ng-click="r.expand=false">[collapse]</a></td>
+				<td ng-hide="r.expand">{{r.name}}<a href="" ng-click="r.expand=true">[expand]</a></td>
+				<td ng-hide="r.expand"><ul class="text-overflow"><li ng-repeat="ingredient in r.ingredients">{{ingredient.quantity.numeric}} {{ingredient.quantity.units}} of {{ingredient.name}}</li></ul></td>
+				<td ng-show="r.expand"><ul><li ng-repeat="ingredient in r.ingredients">{{ingredient.quantity.numeric}} {{ingredient.quantity.units}} of {{ingredient.name}}</li></ul></td>
+				<td ng-hide="r.expand"><p class="text-overflow">{{r.instructions}}</p></td>
+				<td ng-show="r.expand"><p>{{r.instructions}}</p></td>
+				<td ng-hide="r.expand"><a ng-href="{{r.link}}" target="_blank"><p class="text-overflow">{{r.link}}</p></a></td>
+				<td ng-show="r.expand"><a ng-href="{{r.link}}" target="_blank"><p>{{r.link}}</p></a></td>
+				<td><input type="submit" class = "btn btn-default" ng-click="saveRecipe(r)" value="save"></td>
+			</tr>
+			</table>
+		</div>
+	</div>
+
+	<h4>Recipe List:</h4>
+	Search: <input ng-model="query" type="text">
+	<div class="table-responsive">
+		<table class="table table-striped table-bordered">
+			<tr>
+				<th><a href="" ng-click="reverse=!reverse">Recipe Name</a></th>
+				<th>Ingredients</th>
+				<th>Instructions</th>
+				<th>Recipe Link</th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="r in recipes | filter:query | orderBy:category:reverse">
+				<td ng-show="r.expand">{{r.name}}<a href="" ng-click="r.expand=false">[collapse]</a></td>
+				<td ng-hide="r.expand">{{r.name}}<a href="" ng-click="r.expand=true">[expand]</a></td>
+				<td ng-hide="r.expand"><ul class="text-overflow"><li ng-repeat="ingredient in r.ingredients">{{ingredient.quantity.numeric}} {{ingredient.quantity.units}} of {{ingredient.name}}</li></ul></td>
+				<td ng-show="r.expand"><ul><li ng-repeat="ingredient in r.ingredients">{{ingredient.quantity.numeric}} {{ingredient.quantity.units}} of {{ingredient.name}}</li></ul></td>
+				<td ng-hide="r.expand"><p class="text-overflow">{{r.instructions}}</p></td>
+				<td ng-show="r.expand"><p>{{r.instructions}}</p></td>
+				<td ng-hide="r.expand"><a ng-href="{{r.link}}" target="_blank"><p class="text-overflow">{{r.link}}</p></a></td>
+				<td ng-show="r.expand"><a ng-href="{{r.link}}" target="_blank"><p>{{r.link}}</p></a></td>
+				<td><input type="submit" class = "btn btn-default" ng-click="removeRecipe(r)" value="remove"></td>
+			</tr>
+		</table>
+	</div>
+</div>
